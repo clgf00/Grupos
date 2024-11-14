@@ -204,7 +204,7 @@ public class PantallaController {
                     grupoEither
                             .flatMap(grupo -> {
                                 if (grupo.getMiembros().contains(usuario)) {
-                                    return mensajeService.getMensajesOfGrupo(grupoName, desencriptar.getText());
+                                    return mensajeService.getMensajesGrupo(grupoName, desencriptar.getText());
                                 } else {
                                     return Either.left(Constantes.ERROR);
                                 }

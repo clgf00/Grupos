@@ -45,7 +45,7 @@ public class MensajeService {
         }
     }
 
-    public Either<String, List<String>> getMensajesOfGrupo(String grupoName, String privateKey) {
+    public Either<String, List<String>> getMensajesGrupo(String grupoName, String privateKey) {
         return daoMensajes.getMensajesOfGrupo(grupoName).flatMap(mensajesLista -> {
             Either<String, Grupo> grupo = daoGrupos.getGrupoByName(grupoName);
             if (grupo.isRight()) {
