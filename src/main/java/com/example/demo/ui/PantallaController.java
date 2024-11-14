@@ -41,30 +41,29 @@ public class PantallaController {
     @FXML
     private TextField userInput;
     @FXML
-    TextField groupInput;
+    private TextField groupInput;
     @FXML
-    TextField groupInput2;
+    private TextField groupInput2;
     @FXML
     private PasswordField passInput;
     @FXML
-    PasswordField groupPassInput;
+    private PasswordField groupPassInput;
     @FXML
-    PasswordField groupPassInput2;
+    private PasswordField groupPassInput2;
     @FXML
     private TextArea messageInput;
     @FXML
     private ListView<String> chatAreaUser;
     @FXML
-    ListView<String> grupoList;
+    private ListView<String> grupoList;
     @FXML
     private Label greenLabelText;
-
     @FXML
-    Label redLabelText;
+    private Label redLabelText;
     @FXML
-    Label labelText2;
+    private Label labelText2;
     @FXML
-    ListView<Usuario> listUsers;
+    private ListView<Usuario> listUsers;
     @FXML
     private CheckBox checkboxPrivado;
     private String grupoActivo = "";
@@ -117,9 +116,9 @@ public class PantallaController {
             redLabelText.setText(Constantes.CREDENCIALES_NO_PUEDEN_ESTAR_VACIAS);
             return;
         }
-        Either<String, Boolean> resultado = usuarioService.crearUsuario(username, password);
+        Either<String, Boolean> resultado = usuarioService.crearUsuario(username, password);    
 
-        if (resultado.isRight() && resultado.get()) {
+        if (resultado.isRight() && Boolean.TRUE.equals(resultado.get())) {
             greenLabelText.setText(Constantes.BIENVENID + username);
             cargarUsuarios();
         } else {
@@ -272,11 +271,11 @@ public class PantallaController {
                             .filter(g -> g.getNombre().equals(grupoSeleccionado))
                             .findFirst().get();
                     if (grupoActual.isPrivado() && !grupoActual.esAdmin(usuario)) {
-                        redLabelText.setText(Constantes.SOLO_EL_ADMIN_PUEDE_AÑADIR_USUARIOS_A_GRUPOS_PRIVADOS);
+                        redLabelText.setText(Constantes.SOLO_EL_ADMIN_PUEDE_ANYADIR_USUARIOS_A_GRUPOS_PRIVADOS);
                         return;
                     }
                     grupoActual.addMiembro(usuario, usuarioSeleccionado);
-                    greenLabelText.setText(Constantes.USUARIO_AÑADIDO_AL_GRUPO);
+                    greenLabelText.setText(Constantes.USUARIO_ANYADIDO_AL_GRUPO);
                 })
                 .peekLeft(error -> redLabelText.setText(error));
 

@@ -1,6 +1,5 @@
 package com.example.demo.config;
 
-import com.example.demo.domain.Errores.ExcepcionEncriptar;
 import com.google.common.primitives.Bytes;
 import org.springframework.stereotype.Component;
 
@@ -16,35 +15,33 @@ import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 
+//TODO HACERLO CON CONTROL DE ERRORES CON EITHER
+
 @Component
 public class MainAesTestIVRandomMAC {
 
-    public String encrypt(String strToEncrypt, String secret) throws ExcepcionEncriptar {
+    public String encrypt(String strToEncrypt, String secret) throws Exception {
         try {
-
             byte[] iv = new byte[12];
             byte[] salt = new byte[16];
             SecureRandom sr = new SecureRandom();
             sr.nextBytes(iv);
             sr.nextBytes(salt);
             GCMParameterSpec parameterSpec = new GCMParameterSpec(128, iv);
-
-
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             KeySpec spec = new PBEKeySpec(secret.toCharArray(), salt, 65536, 256);
             SecretKey tmp = factory.generateSecret(spec);
             SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
-
             Cipher cipher = Cipher.getInstance("AES/GCM/noPadding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
             return Base64.getUrlEncoder().encodeToString(Bytes.concat(iv, salt,
                     cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8))));
         } catch (Exception e) {
-            throw new ExcepcionEncriptar();
+            throw new Exception();
         }
     }
 
-    public String decrypt(String strToDecrypt, String secret) throws ExcepcionEncriptar {
+    public String decrypt(String strToDecrypt, String secret) throws Exception {
         try {
             byte[] decoded = Base64.getUrlDecoder().decode(strToDecrypt);
 
@@ -62,7 +59,7 @@ public class MainAesTestIVRandomMAC {
             cipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
             return new String(cipher.doFinal(Arrays.copyOfRange(decoded, 28, decoded.length)), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new ExcepcionEncriptar();
+            throw new Exception();
         }
     }
 }

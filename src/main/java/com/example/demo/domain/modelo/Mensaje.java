@@ -1,8 +1,7 @@
 package com.example.demo.domain.modelo;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+
 
 import java.util.ArrayList;
 

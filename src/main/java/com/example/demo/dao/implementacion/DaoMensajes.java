@@ -47,7 +47,7 @@ public class DaoMensajes {
 
         List<Mensaje> mensajesFiltrados = mensajes.stream()
                 .filter(mensaje -> mensaje.getGrupo().getNombre().equals(grupoName))
-                .collect(Collectors.toList());
+                .toList();
 
         if (mensajesFiltrados.isEmpty()) {
             return Either.left(Constantes.ERROR);

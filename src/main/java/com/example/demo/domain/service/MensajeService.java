@@ -4,7 +4,6 @@ import com.example.demo.config.Constantes;
 import com.example.demo.config.MainAesTestIVRandomMAC;
 import com.example.demo.dao.implementacion.DaoGrupos;
 import com.example.demo.dao.implementacion.DaoMensajes;
-import com.example.demo.domain.Errores.ExcepcionEncriptar;
 import com.example.demo.domain.modelo.Grupo;
 import com.example.demo.domain.modelo.Mensaje;
 import io.vavr.control.Either;
@@ -30,17 +29,16 @@ public class MensajeService {
         if (mensajeNuevo.getGrupo().isPrivado()) {
             return daoMensajes.registerMensaje(mensajeNuevo);
         } else {
-            if(clave.isEmpty()){
+            if (clave.isEmpty()) {
                 return Either.left(Constantes.ERROR);
-            }
-            else {
+            } else {
                 try {
                     String textoEncriptado = encryptionService.encrypt(mensajeNuevo.getTexto(), clave);
                     Mensaje mensajeEncriptado = new Mensaje(textoEncriptado, mensajeNuevo.getEmisor(), mensajeNuevo.getRemitentes(), mensajeNuevo.getGrupo());
                     return daoMensajes.registerMensaje(mensajeEncriptado)
                             .map(ok -> mensajeNuevo.getTexto())
                             .mapLeft(error -> Constantes.ERROR);
-                } catch (ExcepcionEncriptar e) {
+                } catch (Exception e) {
                     return Either.left(Constantes.ERROR);
                 }
             }
@@ -66,17 +64,19 @@ public class MensajeService {
                         try {
                             List<String> mensajesDescifrados = new ArrayList<>();
                             mensajesLista.forEach(mensaje -> {
-                                String mensajeDescifrado = encryptionService.decrypt(mensaje.getTexto(), privateKey);
+                                String mensajeDescifrado = null;
+                                try {
+                                    mensajeDescifrado = encryptionService.decrypt(mensaje.getTexto(), privateKey);
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
                                 mensajesDescifrados.add(mensajeDescifrado);
                             });
                             return Either.right(mensajesDescifrados);
-                        } catch (ExcepcionEncriptar e) {
+                        } catch (Exception e) {
                             return Either.left(Constantes.ERROR);
                         }
-
                     }
-
-
                 }
             } else {
                 return Either.left("Error al registrar el mensaje: " + grupoName);
